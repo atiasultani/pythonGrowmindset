@@ -1,0 +1,12 @@
+[project]
+name = "python-mindset"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pandas>=2.2.3",
+    "requests>=2.32.3",
+    "scikit-learn>=1.6.1",
+    "xgboost>=2.1.4",
+]
