@@ -5,7 +5,7 @@ from io import BytesIO
 
 # Set up the app configuration
 st.set_page_config(page_title="Data Sweeper", page_icon="", layout="wide")
-st.title("Data Sweeper")
+st.title("⚔️ Data Sweeper")
 st.write("Transform CSV and Excel Files to built-in duplicate data clean and visualization")
 
 # Cache function to load the data efficiently using st.cache_data
@@ -33,8 +33,8 @@ if uploaded_files:
             continue
 
         # Display file information
-        st.write(f"**File Name:** {file.name}")
-        st.write(f"**File Size:** {file.size / 1024:.2f} KB")
+        st.write(f"🗄️**File Name:** {file.name}")
+        st.write(f"📈**File Size:** {file.size / 1024:.2f} KB")
 
         # Display initial preview (first time only)
         st.write("Preview of the data:")
@@ -45,7 +45,7 @@ if uploaded_files:
         preview_shown = False
 
         # Data Cleaning (remove duplicates and fill missing values)
-        st.subheader("Data Cleaning Options")
+        st.subheader("♻️Data Cleaning Options")
         if st.checkbox(f"Clean data for {file.name}"):
             col1, col2 = st.columns(2)
             with col1:
@@ -66,12 +66,12 @@ if uploaded_files:
 
             # Only show the updated data preview once after cleaning
             if not preview_shown:
-                st.write("Updated Data Preview:")
+                st.write("📄Updated Data Preview:")
                 st.dataframe(df.head(num_rows))  # Show updated preview after filling missing values and removing duplicates
                 preview_shown = True
 
         # Choose specific columns to keep or convert
-        st.subheader("Select Columns to Keep/Convert")
+        st.subheader("💬Select Columns to Keep/Convert")
         columns = st.multiselect(f"Choose Columns from {file.name}", df.columns, default=df.columns)
         df = df[columns]
 
@@ -81,12 +81,12 @@ if uploaded_files:
             st.dataframe(df.head(num_rows))
 
         # Data Visualization (Bar chart)
-        st.subheader("Data Visualization")
+        st.subheader("📊Data Visualization")
         if st.checkbox(f"Show Visualization for {file.name}"):
             st.bar_chart(df.select_dtypes(include='number').iloc[:, :2])
 
         # File Conversion Options (CSV to Excel or Excel to CSV)
-        st.subheader("File Conversion Options")
+        st.subheader("🎊File Conversion Options")
         conversion_type = st.radio(f"Convert {file.name} to:", ["CSV", "Excel"], key=file.name)
         
         if st.button(f"Convert {file.name}"):
