@@ -41,44 +41,42 @@ if uploaded_files:
         num_rows = st.slider("Select number of rows to display", min_value=10, max_value=len(df), value=10)
         st.dataframe(df.head(num_rows))  # Display only the first `num_rows` rows
 
-        # Initialize a flag to track if preview was already shown
-        preview_shown = False
+        # Initialize session state for df if not already present
+        if 'df' not in st.session_state:
+            st.session_state.df = df
+        else:
+            df = st.session_state.df
 
         # Data Cleaning (remove duplicates and fill missing values)
         st.subheader("♻️Data Cleaning Options")
-        if st.checkbox(f"Clean data for {file.name}"):
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button(f"Remove Duplicates from {file.name}"):
-                    df.drop_duplicates(inplace=True)
-                    st.write("Duplicates removed!")
-                    preview_shown = False  # Reset the flag so that preview is shown after removal
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button(f"Remove Duplicates from {file.name}"):
+                df = df.drop_duplicates()
+                st.session_state.df = df  # Update session state
+                st.write("Duplicates removed!")
                 
-            with col2:
-                if st.button(f"Fill Missing Values for {file.name}"):
-                    numeric_cols = df.select_dtypes(include=['number']).columns
-                    # Fill missing numeric values with 0 (instead of the mean)
-                    df[numeric_cols] = df[numeric_cols].fillna(0)
-                    st.write("Missing values have been filled with 0!")
+        with col2:
+            if st.button(f"Fill Missing Values for {file.name}"):
+                numeric_cols = df.select_dtypes(include=['number']).columns
+                # Fill missing numeric values with 0 (instead of the mean)
+                df[numeric_cols] = df[numeric_cols].fillna(0)
+                st.session_state.df = df  # Update session state
+                st.write("Missing values have been filled with 0!")
 
-                    # Show updated data preview after filling missing values
-                    preview_shown = False  # Reset the flag so that preview is shown after filling missing values
-
-            # Only show the updated data preview once after cleaning
-            if not preview_shown:
-                st.write("📄Updated Data Preview:")
-                st.dataframe(df.head(num_rows))  # Show updated preview after filling missing values and removing duplicates
-                preview_shown = True
+        # Show updated data preview after cleaning
+        st.write("📄Updated Data Preview:")
+        st.dataframe(df.head(num_rows))  # Show updated preview after cleaning
 
         # Choose specific columns to keep or convert
         st.subheader("💬Select Columns to Keep/Convert")
         columns = st.multiselect(f"Choose Columns from {file.name}", df.columns, default=df.columns)
         df = df[columns]
+        st.session_state.df = df  # Update session state
 
-        # Show updated data preview after selecting columns (if preview not shown)
-        if not preview_shown:
-            st.write("Updated Data Preview after Column Selection:")
-            st.dataframe(df.head(num_rows))
+        # Show updated data preview after selecting columns
+        st.write("Updated Data Preview after Column Selection:")
+        st.dataframe(df.head(num_rows))
 
         # Data Visualization (Bar chart)
         st.subheader("📊Data Visualization")
